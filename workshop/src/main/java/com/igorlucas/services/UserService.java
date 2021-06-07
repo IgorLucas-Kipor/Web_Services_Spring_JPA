@@ -15,23 +15,23 @@ import com.igorlucas.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class UserService {
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	public List<User> findAll() {
 		return userRepository.findAll();
 	}
-	
+
 	public User findById(Long id) {
 		Optional<User> user = userRepository.findById(id);
 		return user.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
-	
+
 	public User insert(User user) {
 		return userRepository.save(user);
 	}
-	
+
 	public void delete(Long id) {
 		try {
 			userRepository.deleteById(id);
@@ -41,15 +41,11 @@ public class UserService {
 			throw new DatabaseException(e.getMessage());
 		}
 	}
-	
+
 	public User update(Long id, User user) {
-		User entity = userRepository.findById(id).get();
-		if (entity != null) {
+			User entity = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(id));
 			updateData(entity, user);
 			return userRepository.save(entity);
-		} else {
-			return null;
-		}
 	}
 
 	private void updateData(User entity, User user) {
